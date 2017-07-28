@@ -1,0 +1,171 @@
+<html>
+    <head><title>Retirement Calculator</title>
+        <style>
+        table, th, td {
+    border: 1px solid black;
+}
+input[type="text"] {
+     width: 100%; 
+     box-sizing: border-box;
+     -webkit-box-sizing:border-box;
+     -moz-box-sizing: border-box;
+}
+.button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    
+}
+.center {
+    margin: auto;
+    margin-top: 2cm;
+    width: auto;
+    padding: 10px;
+    
+}
+</style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+       </head>
+    <body>
+        <div class="center" id="RetirementCalculator">
+        <h3 style="text-align: center;"><u>RETIREMENT CALCULATOR</u>:<br></h3>
+            <table align="center">
+                <tr><td>Current Age:</td><td><input type="text" id="CurrentAge" value="30"></td></tr>
+                <tr><td>Current Savings:</td><td><input type="text" id="CurrentSavings" value="2,00,000" class="number"></td></tr>
+                <script type="text/javascript">
+                  $('input.number').keyup(function(event) {
+
+  // skip for arrow keys
+  if(event.which >= 37 && event.which <= 40) return;
+
+  // format number
+  $(this).val(function(index, value) {
+      value=removeCommas(value);
+    var lastThree = value.substring(value.length-3);
+var otherNumbers = value.substring(0,value.length-3);
+if(otherNumbers != '')
+    lastThree = ',' + lastThree;
+      return otherNumbers
+    .replace(/\D/g, "")
+    .replace(/\B(?=(\d{2})+(?!\d))/g, ",")+lastThree
+    ;
+  });
+});
+              </script>
+                <tr><td>Current Monthly Expenses:</td><td><input type="text" id="CurrentExpenses" value="50,000" class="number"></td></tr>
+                <script type="text/javascript">
+                  $('input.number').keyup(function(event) {
+
+  // skip for arrow keys
+  if(event.which >= 37 && event.which <= 40) return;
+
+  // format number
+  $(this).val(function(index, value) {
+      value=removeCommas(value);
+    var lastThree = value.substring(value.length-3);
+var otherNumbers = value.substring(0,value.length-3);
+if(otherNumbers != '')
+    lastThree = ',' + lastThree;
+      return otherNumbers
+    .replace(/\D/g, "")
+    .replace(/\B(?=(\d{2})+(?!\d))/g, ",")+lastThree
+    ;
+  });
+});
+              </script>
+                <tr><td>RoI Rate: </td><td><input type="radio" name="gender" value="8" checked> Conservative<br>
+    <input type="radio" name="gender" value="11"> Moderate<br>
+    <input type="radio" name="gender" value="15"> Aggressive </td></tr>
+            </table>
+            <input type="button" class="button" value="Calculate" onclick="Calculate()" style="margin: 0 auto; display:block;">
+            <br>
+                   <table align="center">
+                <!--<tr><td>Inflation Adjusted Rate: (%)</td><td><input type="text" id="InflationAdjustedRate"></td></tr>-->
+                <tr><td>Yearly Retirement Expense:</td><td><input type="text" id="InflationAdjustedExpense"></td></tr>
+                <tr><td>Retirement corpus needed:</td><td><input type="text" id="RetirementCorpus"></td></tr>
+                <tr><td>Monthly investment needed:</td><td><input type="text" id="MonthlySavings"></td></tr>
+            </table> 
+                    </div>
+<div id="Test">
+        </div>
+        <!--<script type ="text/javascript">
+    what();
+    function what(){
+        document.getElementById('Test').innerHTML = '<p>hi</p>';
+    };-->
+        </body>
+    
+    <script>
+        function Calculate(){
+        var CurrentAge=document.getElementById("CurrentAge").value;
+        var RetirementAge=60;
+                //RetirementAge=parseInt(RetirementAge);
+        var DeathAge=80;
+        var CurrentSavings=document.getElementById("CurrentSavings").value;
+        CurrentSavings=removeCommas(CurrentSavings);
+        
+        var difference=RetirementAge-CurrentAge;
+        var difference2=DeathAge-RetirementAge;
+        var ROI=document.querySelector('input[name="gender"]:checked').value/100;
+        //console.log(ROI);
+        
+        //console.log(CurrentSavings);
+        var infRate=5/100;
+        var newRate=(((1+0.06)/(1+infRate))-1)*100;
+        newRate=newRate.toFixed(2);
+        var newRateNew=numberWithCommas(newRate);
+        //document.getElementById("InflationAdjustedRate").value=newRateNew;
+        var monthlyExpense=document.getElementById("CurrentExpenses").value;
+        monthlyExpense=removeCommas(monthlyExpense);
+        var annualExpense=monthlyExpense*12;
+        CurrentSavings=CurrentSavings*(Math.pow((1+(ROI)),difference));
+        CurrentSavings=CurrentSavings.toFixed(2);
+        var FV=annualExpense*(Math.pow((1+(infRate)),difference));
+        FV=FV.toFixed(2);
+        var FVNew=numberWithCommas(FV);
+        document.getElementById("InflationAdjustedExpense").value=FVNew;
+        var PV=FV*(1-(Math.pow((1/(1+(newRate/100))),difference2)))/(newRate/100);
+        PV=PV-CurrentSavings;
+        PV=PV.toFixed(2);
+        
+        var PVNew=numberWithCommas(PV);
+        
+        document.getElementById("RetirementCorpus").value=PVNew;
+        var MonthlySavings=PV*(ROI/12)/(Math.pow(1+ROI/12,difference*12)-1);
+        MonthlySavings=MonthlySavings.toFixed(2);
+        //MonthlySavings=addCommas(MonthlySavings);
+        var MonthlySavingsNew=numberWithCommas(MonthlySavings);
+        document.getElementById("MonthlySavings").value=MonthlySavingsNew;
+        document.getElementById("Test").innerHTML="Thus by investing Rs "+MonthlySavingsNew+" monthly, you will accumulate a retirement corpus of Rs "+PVNew+" which will be sufficient to meet your monthly expenses at retirement (60 years) until you are "+DeathAge+" years old.";
+        }
+        function numberWithCommas(x) {
+   // return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+          //  var x=12345652457.557;
+x=x.toString();
+var afterPoint = '';
+if(x.indexOf('.') > 0)
+   afterPoint = x.substring(x.indexOf('.'),x.length);
+x = Math.floor(x);
+x=x.toString();
+var lastThree = x.substring(x.length-3);
+var otherNumbers = x.substring(0,x.length-3);
+if(otherNumbers != '')
+    lastThree = ',' + lastThree;
+var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + afterPoint;
+
+return(res);
+}
+ function removeCommas(str) {
+    while (str.search(",") >= 0) {
+        str = (str + "").replace(',', '');
+    }
+    return str;
+};        
+    </script>
+    
+</html>
