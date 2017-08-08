@@ -86,7 +86,7 @@ if(otherNumbers != '')
             <br>
                    <table align="center">
                 <!--<tr><td>Inflation Adjusted Rate: (%)</td><td><input type="text" id="InflationAdjustedRate"></td></tr>-->
-                <tr><td>Yearly Retirement Expense:</td><td><input type="text" id="InflationAdjustedExpense"></td></tr>
+                <tr><td>Monthly Retirement Expense:</td><td><input type="text" id="InflationAdjustedExpense"></td></tr>
                 <tr><td>Retirement corpus needed:</td><td><input type="text" id="RetirementCorpus"></td></tr>
                 <tr><td>Monthly investment needed:</td><td><input type="text" id="MonthlySavings"></td></tr>
             </table> 
@@ -123,19 +123,30 @@ if(otherNumbers != '')
         var monthlyExpense=document.getElementById("CurrentExpenses").value;
         monthlyExpense=removeCommas(monthlyExpense);
         var annualExpense=monthlyExpense*12;
+        //Savings at retirement:
         CurrentSavings=CurrentSavings*(Math.pow((1+(ROI)),difference));
         CurrentSavings=CurrentSavings.toFixed(2);
+        //Yearly Expenses at retirement:
         var FV=annualExpense*(Math.pow((1+(infRate)),difference));
+        FV=FV/12;
         FV=FV.toFixed(2);
         var FVNew=numberWithCommas(FV);
+            
         document.getElementById("InflationAdjustedExpense").value=FVNew;
+        FV=FV*12;
         var PV=FV*(1-(Math.pow((1/(1+(newRate/100))),difference2)))/(newRate/100);
-        PV=PV-CurrentSavings;
+        //PV=PV-CurrentSavings;
         PV=PV.toFixed(2);
         
         var PVNew=numberWithCommas(PV);
         
         document.getElementById("RetirementCorpus").value=PVNew;
+        PV=PV-CurrentSavings;
+        //var PV=FV*100/6;
+        //PV=PV.toFixed(2);
+        //var PVNew=numberWithCommas(PV);
+        //document.getElementById("RetirementCorpus").value=PVNew;
+       // PV=PV-CurrentSavings;
         var MonthlySavings=PV*(ROI/12)/(Math.pow(1+ROI/12,difference*12)-1);
         MonthlySavings=MonthlySavings.toFixed(2);
         //MonthlySavings=addCommas(MonthlySavings);
